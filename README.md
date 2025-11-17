@@ -117,7 +117,3 @@ Este projeto está licenciado sob uma Licença Proprietária.
     <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" width="24" alt="LinkedIn"/>
   </a>
 </div>
-
-
-**Opção 3 (Curta e Direta):**
-> Análise completa do público de cinemas. Um projeto de BI com modelagem de dados, pipeline em Python e dashboard em Power BI.
