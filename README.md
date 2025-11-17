@@ -23,7 +23,7 @@ Este projeto foi desenvolvido como parte de uma avaliação acadêmica com o obj
 
 | Dashboard Final | Modelagem de BI (Star Schema) | Modelagem Convencional (ERP) |
 | :---: | :---: | :---: |
-| <img width="1646" height="976" alt="Image" src="https://github.com/user-attachments/assets/e8b16ec0-fc53-4dcc-af07-feac68f00628" /> | ![Modelo Dimensional Star Schema](link-para-sua-imagem-do-modelo-bi) | ![Modelo Transacional ERP](link-para-sua-imagem-do-modelo-convencional) |
+| <img width="1646" height="976" alt="Image" src="https://github.com/user-attachments/assets/e8b16ec0-fc53-4dcc-af07-feac68f00628" /> | ![Image](https://github.com/user-attachments/assets/287aff7e-602a-42fa-bb3e-47a742d92877) | ![Modelo Transacional ERP](link-para-sua-imagem-do-modelo-convencional) |
 
 ## ✨ Funcionalidades
 
