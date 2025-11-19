@@ -4,17 +4,17 @@ import random
 from datetime import datetime, timedelta
 import os
 
-print("🎬 Gerador de Dados Massivos para Cinema BI")
+print("Gerador de Dados Massivos para Business Intelligence de Cinema")
 print("=" * 60)
 
-# Configuração: QUANTAS SESSÕES DESEJA GERAR?
-NUM_SESSOES = 300  # ← ALTERE AQUI: Número de SESSÕES (não espectadores)
-print(f"📊 Gerando {NUM_SESSOES} sessões de cinema...")
-print(f"💡 Cada sessão terá uma ocupação realista baseada na capacidade da sala")
+# Parâmetro de configuração para o número de sessões a serem geradas
+NUM_SESSOES = 300  # Altere este valor para definir o número de sessões
+print(f"Gerando {NUM_SESSOES} sessões de cinema...")
+print(f"A ocupação de cada sessão será calculada com base na capacidade da sala e no dia da semana.")
 
-# --- DADOS BASE ---
+# --- Definição dos dados base ---
 
-# Cinemas (vamos criar mais cinemas)
+# Lista de cinemas com seus respectivos detalhes
 cinemas = [
     {"id": 1, "nome_fantasia": "Cinépolis Central", "endereco": "Rua das Flores 123, São Paulo, SP", "capacidade": 250},
     {"id": 2, "nome_fantasia": "Cinemark Leste", "endereco": "Avenida Principal 456, Rio de Janeiro, RJ", "capacidade": 300},
@@ -23,7 +23,7 @@ cinemas = [
     {"id": 5, "nome_fantasia": "Cinesystem Sul", "endereco": "Av Getúlio Vargas 789, Porto Alegre, RS", "capacidade": 220},
 ]
 
-# Diretores
+# Lista de diretores
 diretores = [
     {"id": 101, "nome": "Christopher Nolan"},
     {"id": 102, "nome": "Denis Villeneuve"},
@@ -35,7 +35,7 @@ diretores = [
     {"id": 108, "nome": "Ridley Scott"},
 ]
 
-# Atores
+# Lista de atores com detalhes demográficos
 atores = [
     {"id": 201, "nome": "Cillian Murphy", "nacionalidade": "Irlandesa", "sexo": "Masculino", "idade": 48},
     {"id": 202, "nome": "Timothée Chalamet", "nacionalidade": "Americana", "sexo": "Masculino", "idade": 28},
@@ -49,7 +49,7 @@ atores = [
     {"id": 210, "nome": "Brad Pitt", "nacionalidade": "Americana", "sexo": "Masculino", "idade": 60},
 ]
 
-# Filmes
+# Lista de filmes com metadados
 filmes = [
     {"id": 1, "titulo_original": "Oppenheimer", "titulo_portugues": "Oppenheimer", "genero": "Drama", "duracao": 180, "impropriedade": "16 anos", "pais_origem": "EUA", "diretor_id": 101},
     {"id": 2, "titulo_original": "Dune: Part Two", "titulo_portugues": "Duna: Parte Dois", "genero": "Ficção Científica", "duracao": 166, "impropriedade": "14 anos", "pais_origem": "EUA", "diretor_id": 102},
@@ -61,7 +61,7 @@ filmes = [
     {"id": 8, "titulo_original": "The Equalizer 3", "titulo_portugues": "O Protetor 3", "genero": "Ação", "duracao": 109, "impropriedade": "18 anos", "pais_origem": "EUA", "diretor_id": 106},
 ]
 
-# Filmes e Atores (relacionamento)
+# Tabela de relacionamento entre filmes e atores
 filmes_atores = [
     {"filme_id": 1, "ator_id": 201},
     {"filme_id": 2, "ator_id": 202}, {"filme_id": 2, "ator_id": 203},
@@ -73,9 +73,9 @@ filmes_atores = [
     {"filme_id": 8, "ator_id": 210},
 ]
 
-# --- GERAÇÃO DE SESSÕES MASSIVAS COM OCUPAÇÃO REALISTA ---
+# --- Geração de dados de sessões com ocupação realista ---
 
-# Período: últimos 6 meses
+# Define o período de geração dos dados
 data_inicio = datetime(2024, 5, 1)
 data_fim = datetime(2024, 10, 31)
 dias_range = (data_fim - data_inicio).days
@@ -83,64 +83,65 @@ dias_range = (data_fim - data_inicio).days
 sessoes = []
 id_espectador = 1000
 
-print(f"📽️  Criando {NUM_SESSOES} sessões com ocupação realista de cinema...")
+print(f"Iniciando a criação de {NUM_SESSOES} sessões com dados de público...")
 
-# Dicionário para buscar capacidade do cinema
+# Mapeia IDs de cinema para suas capacidades para acesso rápido
 cinemas_dict = {c['id']: c for c in cinemas}
 
 for sessao_num in range(NUM_SESSOES):
-    # Dados da sessão
+    # Seleciona aleatoriamente os dados da sessão
     sessao_id = f"S{1000 + sessao_num}"
     cinema_id = random.choice([c['id'] for c in cinemas])
     filme_id = random.choice([f['id'] for f in filmes])
     
-    # Data aleatória no período
+    # Define uma data aleatória dentro do período especificado
     dias_offset = random.randint(0, dias_range)
     data_exibicao = data_inicio + timedelta(days=dias_offset)
     
-    # Dia da semana influencia ocupação
+    # O dia da semana influencia a taxa de ocupação
     dia_semana = data_exibicao.weekday()
-    is_fim_de_semana = dia_semana >= 5  # Sábado ou Domingo
+    is_fim_de_semana = dia_semana >= 5  # Sábado (5) ou Domingo (6)
     is_sexta = dia_semana == 4
     
-    # Capacidade da sala
+    # Obtém a capacidade da sala do cinema selecionado
     capacidade_sala = cinemas_dict[cinema_id]['capacidade']
     
-    # Taxa de ocupação realista baseada no dia
+    # Define uma taxa de ocupação realista com base no dia da semana
     if is_fim_de_semana:
-        # Fim de semana: 60% a 95% de ocupação
+        # Fim de semana tem maior ocupação: 60% a 95%
         taxa_ocupacao = random.uniform(0.60, 0.95)
     elif is_sexta:
-        # Sexta-feira: 50% a 85% de ocupação
+        # Sexta-feira tem ocupação intermediária: 50% a 85%
         taxa_ocupacao = random.uniform(0.50, 0.85)
     else:
-        # Dias úteis: 15% a 60% de ocupação
+        # Dias de semana têm menor ocupação: 15% a 60%
         taxa_ocupacao = random.uniform(0.15, 0.60)
     
-    # Blockbusters têm mais público
+    # Aumenta a taxa de ocupação para filmes mais populares (blockbusters)
     filmes_populares = [1, 2, 3, 5]  # Oppenheimer, Dune, Barbie, Avatar
     if filme_id in filmes_populares:
-        taxa_ocupacao = min(taxa_ocupacao * 1.3, 0.98)
+        taxa_ocupacao = min(taxa_ocupacao * 1.3, 0.98) # Limita em 98% para não exceder a capacidade
     
-    # Número de espectadores nesta sessão
+    # Calcula o número de espectadores para a sessão
     num_espectadores_sessao = int(capacidade_sala * taxa_ocupacao)
-    num_espectadores_sessao = max(5, num_espectadores_sessao)  # Mínimo 5 pessoas
+    num_espectadores_sessao = max(5, num_espectadores_sessao)  # Garante um número mínimo de 5 espectadores
     
-    # Gera os espectadores desta sessão
+    # Gera os registros de espectadores para esta sessão
     for _ in range(num_espectadores_sessao):
-        # Perfil do público (mais realista)
-        # Fim de semana tem mais famílias (mais crianças)
+        # Define o perfil do público com base no dia da semana
+        # Fins de semana tendem a ter mais famílias e crianças
         if is_fim_de_semana:
             tipo_publico = random.choices(
                 ['adulto', 'adolescente', 'crianca', 'idoso'],
-                weights=[50, 20, 25, 5]  # Mais crianças no FDS
+                weights=[50, 20, 25, 5]
             )[0]
         else:
             tipo_publico = random.choices(
                 ['adulto', 'adolescente', 'crianca', 'idoso'],
-                weights=[65, 20, 10, 5]  # Mais adultos em dias úteis
+                weights=[65, 20, 10, 5]
             )[0]
         
+        # Atribui uma idade com base no perfil do público
         if tipo_publico == 'adulto':
             idade = random.randint(18, 59)
         elif tipo_publico == 'adolescente':
@@ -150,7 +151,7 @@ for sessao_num in range(NUM_SESSOES):
         else:  # idoso
             idade = random.randint(60, 85)
         
-        # Sexo com distribuição aproximada 50/50
+        # Distribui o sexo de forma aproximadamente igual
         sexo = random.choice(['Masculino', 'Feminino'])
         
         sessoes.append({
@@ -164,14 +165,14 @@ for sessao_num in range(NUM_SESSOES):
         
         id_espectador += 1
 
-print(f"✅ {len(sessoes)} sessões geradas!")
+print(f"Geração concluída: {len(sessoes)} registros de espectadores criados.")
 
-# --- SALVAR CSVs ---
+# --- Armazenamento dos dados em arquivos CSV ---
 
 output_path = 'dados_origem'
 os.makedirs(output_path, exist_ok=True)
 
-# Salva cada tabela
+# Salva cada DataFrame em um arquivo CSV separado
 pd.DataFrame(cinemas).to_csv(os.path.join(output_path, 'cinemas.csv'), index=False, encoding='utf-8')
 pd.DataFrame(diretores).to_csv(os.path.join(output_path, 'diretores.csv'), index=False, encoding='utf-8')
 pd.DataFrame(atores).to_csv(os.path.join(output_path, 'atores.csv'), index=False, encoding='utf-8')
@@ -179,44 +180,47 @@ pd.DataFrame(filmes).to_csv(os.path.join(output_path, 'filmes.csv'), index=False
 pd.DataFrame(filmes_atores).to_csv(os.path.join(output_path, 'filmes_atores.csv'), index=False, encoding='utf-8')
 pd.DataFrame(sessoes).to_csv(os.path.join(output_path, 'sessoes_publico.csv'), index=False, encoding='utf-8')
 
-print(f"\n💾 Arquivos salvos na pasta '{output_path}':")
-print(f"  ✓ cinemas.csv ({len(cinemas)} registros)")
-print(f"  ✓ diretores.csv ({len(diretores)} registros)")
-print(f"  ✓ atores.csv ({len(atores)} registros)")
-print(f"  ✓ filmes.csv ({len(filmes)} registros)")
-print(f"  ✓ filmes_atores.csv ({len(filmes_atores)} registros)")
-print(f"  ✓ sessoes_publico.csv ({len(sessoes)} registros)")
+print(f"\nArquivos CSV salvos no diretório '{output_path}':")
+print(f"  - cinemas.csv ({len(cinemas)} registros)")
+print(f"  - diretores.csv ({len(diretores)} registros)")
+print(f"  - atores.csv ({len(atores)} registros)")
+print(f"  - filmes.csv ({len(filmes)} registros)")
+print(f"  - filmes_atores.csv ({len(filmes_atores)} registros)")
+print(f"  - sessoes_publico.csv ({len(sessoes)} registros)")
 
 print("\n" + "=" * 60)
-print("🚀 PRÓXIMOS PASSOS:")
-print("1. Execute: python gerar_tabelas_excel.py")
-print("2. No Power BI: Dados → Atualizar Tudo (ou clique com botão direito na tabela → Atualizar)")
-print("3. Pronto! Os novos dados aparecerão automaticamente!")
+print("Instruções para próximos passos:")
+print("1. Execute o script 'gerar_tabelas_excel.py' para consolidar os dados.")
+print("2. No Power BI, utilize a função 'Atualizar Tudo' para carregar os novos dados.")
+print("3. Os dashboards serão atualizados automaticamente com as novas informações.")
 print("=" * 60)
 
-# Estatísticas
-print("\n📊 ESTATÍSTICAS DOS DADOS GERADOS:")
-print(f"  • Total de espectadores: {len(sessoes):,}")
-print(f"  • Total de sessões únicas: {NUM_SESSOES}")
-print(f"  • Média de espectadores por sessão: {len(sessoes)/NUM_SESSOES:.1f}")
-print(f"  • Período: {data_inicio.strftime('%d/%m/%Y')} a {data_fim.strftime('%d/%m/%Y')}")
-print(f"  • Cinemas: {len(cinemas)}")
-print(f"  • Filmes: {len(filmes)}")
-print(f"  • Atores: {len(atores)}")
+# --- Exibição de estatísticas dos dados gerados ---
+print("\nEstatísticas dos Dados Gerados:")
+print(f"  - Total de espectadores: {len(sessoes):,}")
+print(f"  - Total de sessões únicas: {NUM_SESSOES}")
+print(f"  - Média de espectadores por sessão: {len(sessoes)/NUM_SESSOES:.1f}")
+print(f"  - Período considerado: {data_inicio.strftime('%d/%m/%Y')} a {data_fim.strftime('%d/%m/%Y')}")
+print(f"  - Quantidade de cinemas: {len(cinemas)}")
+print(f"  - Quantidade de filmes: {len(filmes)}")
+print(f"  - Quantidade de atores: {len(atores)}")
 
 df_sessoes = pd.DataFrame(sessoes)
-print(f"\n  📊 Ocupação por Cinema:")
+print(f"\nOcupação por Cinema:")
 for cinema in cinemas:
     cinema_sessoes = df_sessoes[df_sessoes['cinema_id'] == cinema['id']]
-    if len(cinema_sessoes) > 0:
+    if not cinema_sessoes.empty:
         sessoes_cinema = cinema_sessoes['sessao_id'].nunique()
         espectadores_cinema = len(cinema_sessoes)
         media_ocupacao = espectadores_cinema / sessoes_cinema if sessoes_cinema > 0 else 0
-        taxa_ocupacao = (media_ocupacao / cinema['capacidade']) * 100
-        print(f"    {cinema['nome_fantasia']}: {espectadores_cinema:,} espectadores em {sessoes_cinema} sessões")
-        print(f"      → Média: {media_ocupacao:.1f} pessoas/sessão ({taxa_ocupacao:.1f}% de ocupação)")
+        taxa_ocupacao_percentual = (media_ocupacao / cinema['capacidade']) * 100
+        print(f"  - {cinema['nome_fantasia']}: {espectadores_cinema:,} espectadores em {sessoes_cinema} sessões")
+        print(f"    Média: {media_ocupacao:.1f} pessoas/sessão (Taxa de ocupação de {taxa_ocupacao_percentual:.1f}%)")
 
-print(f"\n  👥 Distribuição por sexo:")
-print(f"    - Masculino: {len(df_sessoes[df_sessoes['sexo_publico']=='Masculino']):,} ({len(df_sessoes[df_sessoes['sexo_publico']=='Masculino'])/len(df_sessoes)*100:.1f}%)")
-print(f"    - Feminino: {len(df_sessoes[df_sessoes['sexo_publico']=='Feminino']):,} ({len(df_sessoes[df_sessoes['sexo_publico']=='Feminino'])/len(df_sessoes)*100:.1f}%)")
-print(f"  • Idade média: {df_sessoes['idade_publico'].mean():.1f} anos")
+print(f"\nDistribuição por sexo do público:")
+total_espectadores = len(df_sessoes)
+masculino_count = len(df_sessoes[df_sessoes['sexo_publico'] == 'Masculino'])
+feminino_count = len(df_sessoes[df_sessoes['sexo_publico'] == 'Feminino'])
+print(f"  - Masculino: {masculino_count:,} ({masculino_count / total_espectadores:.1%})")
+print(f"  - Feminino: {feminino_count:,} ({feminino_count / total_espectadores:.1%})")
+print(f"  - Idade média do público: {df_sessoes['idade_publico'].mean():.1f} anos")
